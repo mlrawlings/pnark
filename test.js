@@ -1,116 +1,122 @@
-var pnark = require('./index')
+var Pnark = require('./index')
+var utils = require('./utils')
 var expect = require('expect')
 
 describe('parseParam', function() {
   it('should return an empty array if the parameter is undefined', function() {
-    expect(pnark.parseParam()).toEqual([])
+    expect(utils.parseParam()).toEqual([])
   })
   it('should return an an array [\'*\'] if the parameter is empty string', function() {
-    expect(pnark.parseParam('')).toEqual(['*'])
+    expect(utils.parseParam('')).toEqual(['*'])
   })
   it('should return an array of a single parameter', function() {
-    expect(pnark.parseParam('async-fragment')).toEqual(['async-fragment'])
+    expect(utils.parseParam('async-fragment')).toEqual(['async-fragment'])
   })
   it('should return an array of multiple parameters', function() {
-    expect(pnark.parseParam('async-fragment,tessa')).toEqual(['async-fragment', 'tessa'])
+    expect(utils.parseParam('async-fragment,tessa,test')).toEqual(['async-fragment', 'tessa', 'test'])
   })
 })
 
-describe('createConfiguration', function() {
-  var pluginA = function(a){}
-  var pluginB = function(b){}
-  var pluginC = function(c){}
+describe('Pnark', function() {
+  var reporterA = function(a){}
+  var reporterB = function(b){}
+  var reporterC = function(c){}
+
   it('should see these functions differently', function() {
-    expect(pluginA).toNotEqual(pluginB)
+    expect(reporterA).toNotEqual(reporterB)
   })
-  it('should handle standard plugins', function() {
-    var config = pnark.createConfiguration({
-      plugins:{
-        'foo':pluginA,
+
+  it('should handle top-level reporters', function() {
+    var pnark = new Pnark({
+      reporters:{
+        'foo':reporterA,
       },
     })
 
-    expect(config).toEqual({ '*':[pluginA], 'foo':[pluginA] })
+    expect(pnark.config).toEqual({ '*':[reporterA], 'foo':[reporterA] })
   })
-  it('should handle namespaced plugins', function() {
-    var config = pnark.createConfiguration({
-      plugins:{
+
+  it('should handle namespaced reporters', function() {
+    var pnark = new Pnark({
+      reporters:{
         'ns':{
-          'foo':pluginA,
-          'bar':pluginB,
+          'foo':reporterA,
+          'bar':reporterB,
         },
       },
     })
 
-    expect(config).toEqual({
-      '*':[pluginA, pluginB],
-      'ns':[pluginA, pluginB],
-      'ns:foo':[pluginA],
-      'ns:bar':[pluginB],
+    expect(pnark.config).toEqual({
+      '*':[reporterA, reporterB],
+      'ns':[reporterA, reporterB],
+      'ns:foo':[reporterA],
+      'ns:bar':[reporterB],
     })
   })
-  it('should handle bundled plugins', function() {
-    var myBundle = {
-      plugins:{
-        'bar':pluginB
+
+  it('should handle plugins', function() {
+    var myPlugin = {
+      reporters:{
+        'bar':reporterB
       }
     }
 
-    var config = pnark.createConfiguration({
-      plugins:{
-        'foo':pluginA,
+    var pnark = new Pnark({
+      reporters:{
+        'foo':reporterA,
       },
-      bundles:[myBundle]
+      plugins:[myPlugin]
     })
 
-    expect(config).toEqual({
-      '*':[pluginA, pluginB],
-      'foo':[pluginA],
-      'bar':[pluginB],
+    expect(pnark.config).toEqual({
+      '*':[reporterA, reporterB],
+      'foo':[reporterA],
+      'bar':[reporterB],
     })
   })
   it('should handle profiles', function() {
-    var config = pnark.createConfiguration({
+    var pnark = new Pnark({
       profiles: {
         'test':['foo', 'bar'],
       },
-      plugins:{
-        'foo':pluginA,
-        'bar':pluginB,
-        'baz':pluginC,
+      reporters:{
+        'foo':reporterA,
+        'bar':reporterB,
+        'baz':reporterC,
       },
     })
 
-    expect(config).toEqual({
-      '*':[pluginA, pluginB, pluginC],
-      'test':[pluginA, pluginB],
-      'foo':[pluginA],
-      'bar':[pluginB],
-      'baz':[pluginC],
+    expect(pnark.config).toEqual({
+      '*':[reporterA, reporterB, reporterC],
+      'test':[reporterA, reporterB],
+      'foo':[reporterA],
+      'bar':[reporterB],
+      'baz':[reporterC],
     })
   })
-  it('should handle bundled profiles', function() {
-    var myBundle = {
+
+  it('should handle profiles defined in plugins', function() {
+    var myPlugin = {
       profiles: {
         'test':['foo', 'bar'],
       },
-      plugins:{
-        'foo':pluginA,
-        'bar':pluginB,
-        'baz':pluginC,
+      reporters:{
+        'foo':reporterA,
+        'bar':reporterB,
+        'baz':reporterC,
       },
     }
 
-    var config = pnark.createConfiguration({
-      bundles:[myBundle],
+    var pnark = new Pnark({
+      plugins:[myPlugin],
     })
 
-    expect(config).toEqual({
-      '*':[pluginA, pluginB, pluginC],
-      'test':[pluginA, pluginB],
-      'foo':[pluginA],
-      'bar':[pluginB],
-      'baz':[pluginC],
+    expect(pnark.config).toEqual({
+      '*':[reporterA, reporterB, reporterC],
+      'test':[reporterA, reporterB],
+      'foo':[reporterA],
+      'bar':[reporterB],
+      'baz':[reporterC],
     })
   })
 })

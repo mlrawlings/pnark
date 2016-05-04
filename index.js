@@ -9,11 +9,11 @@ var Pnark = module.exports = function Pnark(options) {
 var pnark = Pnark.prototype
 
 pnark.addToConfig = function addToConfig(key, value) {
-  config[key] = config[key] || []
+  this.config[key] = this.config[key] || []
   if(Array.isArray(value)) {
-    config[key] = config[key].concat(value)
+    this.config[key] = this.config[key].concat(value)
   } else {
-    config[key].push(value)
+    this.config[key].push(value)
   }
 }
 
@@ -40,7 +40,7 @@ pnark.addProfiles = function addProfiles(profiles) {
       throw new Error('a profile must be an array of namespaces and reporters')
     }
 
-    profile.forEach(p => this.addToConfig(name, config[p]))
+    profile.forEach(p => this.addToConfig(name, this.config[p]))
   })
 }
 
