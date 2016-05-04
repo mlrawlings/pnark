@@ -1,0 +1,14 @@
+.cache
+lib-cov
+coverage
+npm-debug.log
+/node_modules
+
+pids
+logs
+results
+
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
