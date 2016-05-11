@@ -4,12 +4,20 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha"
+    "test": "./node_modules/.bin/mocha --ui bdd --reporter spec ./test"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "expect": "^1.19.0",
-    "mocha": "^2.4.5"
+    "chai": "^3.5.0",
+    "express": "^4.13.4",
+    "jsdom": "^9.0.0",
+    "mocha": "^2.4.5",
+    "mockdate": "^1.0.4",
+    "request": "^2.72.0"
+  },
+  "dependencies": {
+    "escodegen": "^1.8.0",
+    "lave": "^1.1.10"
   }
 }
