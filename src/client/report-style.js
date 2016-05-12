@@ -5,10 +5,15 @@ module.exports = `
             background:#fff;
             padding:0;
             margin:0;
+            color:#333;
         }
 
         tt, code, kbd, samp {
-            font-family:'San Francisco Mono', 'Consolas', 'Inconsolata', 'Monaco', 'Roboto Mono', 'Droid Sans Mono', monospace;
+            font-family:'SF UI Mono', 'Consolas', 'Inconsolata', 'Monaco', 'Roboto Mono', 'Droid Sans Mono', monospace;
+            border-radius:4px;
+            background-color: #f7f4ee;
+            color: #111;
+            padding: 0.1em 0.5em;
         }
 
         h1, h2, h3, h4, h5, h6 {
@@ -16,6 +21,7 @@ module.exports = `
             font-weight:500;
             margin-bottom:10px;
             font-size:1.5em;
+            color:#111;
         }
 
         h1 {
