@@ -43,7 +43,15 @@ section.getHTML = function getHTML() {
     }
 
     this.content.forEach(content => {
-        html += Section.Types[content.type].getHTML.call(this, content.data, this.typeConfig[content.type])
+        var data = content.data
+        var config = this.typeConfig[content.type]
+        var type = Section.Types[content.type]
+
+        if(data instanceof Function) {
+            data = data()
+        }
+
+        html += type.getHTML.call(this, data, config)
     })
 
     return `<section>${html}</section>`
@@ -90,8 +98,7 @@ Section.registerType('markdown', {
 
 Section.registerType('json', {
     helper: function(json) {
-        var markdown = '```json\n'+JSON.stringify(json, null, 2)+'\n```'
-        return this.markdown(markdown)
+        return this.markdown(() => '```json\n'+JSON.stringify(json, null, 2)+'\n```')
     }
 })
 
