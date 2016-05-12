@@ -16,6 +16,9 @@ Section.Types = {
 
 Section.registerType = function(type, definition) {
     Section.prototype[type] = function() {
+        if(!(type in this.typeData)) {
+            this.typeData[type] = undefined
+        }
         this.content.push({ type, args:arguments })
     }
     Section.Types[type] = definition
@@ -67,7 +70,26 @@ Section.registerType('text', {
 })
 
 Section.registerType('markdown', {
-    getHTML: (markdown) => require('marked')(markdown)
+    getHTML: function(markdown) {
+        var config = this.typeData.markdown = this.typeData.markdown || {}
+        config.codeHighlighting = config.codeHighlighting || /```\S+/.test(markdown)
+        return require('marked')(markdown)
+    },
+    getScripts: function(config) {
+        if(config && config.codeHighlighting) return `
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/agate.min.css" rel="stylesheet" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
+            <script>hljs.initHighlightingOnLoad();</script>
+        `
+    }
+})
+
+Section.registerType('json', {
+    getHTML: function(json) {
+        var markdown = '```json\n'+JSON.stringify(json, null, 2)+'\n```'
+        return Section.Types.markdown.getHTML.call(this, markdown)
+    },
+    getScripts: Section.Types.markdown.getScripts
 })
 
 Section.registerType('highchart', {
@@ -77,16 +99,16 @@ Section.registerType('highchart', {
         definition.chart = definition.chart || {}
         definition.chart.renderTo = chartId
 
-        this.typeData.highchart = this.typeData.highchart = []
+        this.typeData.highchart = this.typeData.highchart || []
         this.typeData.highchart.push(definition)
 
         return `<div id="${chartId}"></div>`
     },
-    getScripts: function(data) {
+    getScripts: function(definitions) {
         return `
             <script src="https://code.highcharts.com/highcharts.js"></script>
             <script>
-                var charts = ${JSON.stringify(data)};
+                var charts = ${JSON.stringify(definitions)};
                 charts.forEach(function(chart) {
                     new Highcharts.Chart(chart);
                 });

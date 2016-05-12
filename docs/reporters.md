@@ -26,6 +26,10 @@ mySection.text('Hello World');
 mySection.markdown('Hello **World**'); //github flavored
 ```
 
+```js
+mySection.json({ a:1, b:'2' }); //will be highlighted in the browser
+```
+
 Charts, powered by [HighCharts](http://www.highcharts.com/) ([docs](http://api.highcharts.com/highcharts)/[examples](http://www.highcharts.com/demo)):
 
 ```js

@@ -1,11 +1,14 @@
 module.exports = `
-    <link href='https://fonts.googleapis.com/css?family=Roboto:400,500' rel='stylesheet' type='text/css'>
     <style>
         body {
-            font-family:Roboto, Helvetica, Arial, sans-serif;
+            font-family:-apple-system, BlinkMacSystemFont, 'SF UI Text', 'Helvetica Neue', 'Roboto', 'Arial Nova', 'Segoe UI', 'Arial', sans-serif;
             background:#fff;
             padding:0;
             margin:0;
+        }
+
+        tt, code, kbd, samp {
+            font-family:'San Francisco Mono', 'Consolas', 'Inconsolata', 'Monaco', 'Roboto Mono', 'Droid Sans Mono', monospace;
         }
 
         h1, h2, h3, h4, h5, h6 {
