@@ -50,53 +50,14 @@ A reporter is a function that takes three parameters:
 
 ```js
 module.exports = function reporter(report, req, res) {
-    report.section({
-        title:'This is my Title',
-        html:'<strong>my content</strong>'
-    });
+    report.section('This is My Title')
+          .html('<strong>my content</strong>')
+          .end();
 
     report.end();
 };
 ```
-
-#### Charts
-
-See [Google Charts](https://developers.google.com/chart/interactive/docs/gallery)
-for chart types and options.
-
-```js
-report.section({
-    title:'This is another title',
-    chart:'Timeline',
-    cols:[
-        { type:'string', id:'Name' },
-        { type:'date', id:'Start' },
-        { type:'date', id:'Finish' }
-    ],
-    rows:[
-        [ 'First', new Date(), new Date() ],
-        [ 'Second', new Date(), new Date() ]
-    ],
-    options:{
-
-    }
-});
-```
-
-#### Subsections
-
-```js
-report.section({
-    title:'My Third Title',
-    subsections:[{
-        title:'Subtitle 1',
-        markdown:'*hi!*'
-    }, {
-        title:'Subtitle 2',
-        text:'this is plain text'
-    }]
-})
-```
+Learn more in the [reporters docs](docs/reporters.md).
 
 ### Exporting a Reporter
 

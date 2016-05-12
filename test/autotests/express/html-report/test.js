@@ -5,10 +5,8 @@ exports.initApp = function(app, middleware) {
         reportDirectory:__dirname,
         reporters:{
             foo: (report, req, res) => {
-                report.section({
-                    title:'My Title',
-                    html:'<p>Hello World</p>'
-                })
+                report.section('My Title')
+                      .html('<p>Hello World</p>')
                 report.end()
             }
         }

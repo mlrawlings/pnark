@@ -5,19 +5,26 @@ exports.initApp = function(app, middleware) {
         reportDirectory:__dirname,
         reporters:{
             foo: (report, req, res) => {
-                report.section({
-                    title:'My Title',
-                    chart:'Timeline',
-                    cols:[
-                        { type:'string', id:'Name' },
-                        { type:'date', id:'Start' },
-                        { type:'date', id:'Finish' }
-                    ],
-                    rows:[
-                        [ 'First', new Date(), new Date() ],
-                        [ 'Second', new Date(), new Date() ]
-                    ],
+                var section = report.section('My Title')
+
+                section.highchart({
+                    title: {
+                        text: 'Monthly Average Temperature'
+                    },
+                    xAxis: {
+                        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                    },
+                    yAxis: {
+                        title: 'Temperature (\u00B0C)'
+                    },
+                    tooltip: {
+                        valueSuffix: '\u00B0C'
+                    },
+                    series: [{
+                        data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+                    }]
                 })
+
                 report.end()
             }
         }
@@ -30,7 +37,7 @@ exports.initApp = function(app, middleware) {
 }
 
 exports.checkReportDOM = function(window, document, expect) {
-    var chartPlaceholder = document.querySelector('div[id^=chart]')
+    var chartPlaceholder = document.querySelector('div[id^=highchart]')
     expect(chartPlaceholder).to.exist
     expect(chartPlaceholder.innerHTML).to.equal('')
 }
