@@ -2,7 +2,7 @@ var Section = module.exports = function Section(config) {
     this.title = config.title
     this.parent = config.parent
     this.reporter = config.reporter
-    this.typeData = config.typeData
+    this.typeConfig = config.typeConfig
     this.level = config.level || 0
 
     this.content = []
@@ -11,16 +11,16 @@ var Section = module.exports = function Section(config) {
 Section.Types = {}
 
 Section.registerType = function(type, definition) {
-    Section.prototype[type] = function() {
-        if(!(type in this.typeData)) {
-            this.typeData[type] = undefined
+    Section.prototype[type] = function(data) {
+        if(!this.typeConfig[type]) {
+            this.typeConfig[type] = {}
         }
 
         if(Section.Types[type].helper) {
             return Section.Types[type].helper.apply(this, arguments)
         }
 
-        this.content.push({ type, args:arguments })
+        this.content.push({ type, data })
         return this
     }
     Section.Types[type] = definition
@@ -43,7 +43,7 @@ section.getHTML = function getHTML() {
     }
 
     this.content.forEach(content => {
-        html += Section.Types[content.type].getHTML.apply(this, content.args)
+        html += Section.Types[content.type].getHTML.call(this, content.data, this.typeConfig[content.type])
     })
 
     return `<section>${html}</section>`
@@ -55,11 +55,11 @@ Section.registerType('section', {
             title,
             parent: this,
             reporter: this.reporter,
-            typeData:this.typeData,
+            typeConfig:this.typeConfig,
             level: this.level + 1
         })
 
-        this.content.push({ type:'section', args:[subsection] })
+        this.content.push({ type:'section', data:subsection })
 
         return subsection
     },
@@ -75,8 +75,7 @@ Section.registerType('text', {
 })
 
 Section.registerType('markdown', {
-    getHTML: function(markdown) {
-        var config = this.typeData.markdown = this.typeData.markdown || {}
+    getHTML: function(markdown, config) {
         config.codeHighlighting = config.codeHighlighting || /```\S+/.test(markdown)
         return require('marked')(markdown)
     },
@@ -97,22 +96,22 @@ Section.registerType('json', {
 })
 
 Section.registerType('highchart', {
-    getHTML: function(definition) {
+    getHTML: function(definition, config) {
         var chartId = `highchart-${Math.floor(Math.random()*1000000000)}`
 
         definition.chart = definition.chart || {}
         definition.chart.renderTo = chartId
 
-        this.typeData.highchart = this.typeData.highchart || []
-        this.typeData.highchart.push(definition)
+        config.charts = config.charts || []
+        config.charts.push(definition)
 
         return `<div id="${chartId}"></div>`
     },
-    getScripts: function(definitions) {
+    getScripts: function(config) {
         return `
             <script src="https://code.highcharts.com/highcharts.js"></script>
             <script>
-                var charts = ${JSON.stringify(definitions)};
+                var charts = ${JSON.stringify(config.charts)};
                 charts.forEach(function(chart) {
                     new Highcharts.Chart(chart);
                 });

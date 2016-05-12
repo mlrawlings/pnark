@@ -6,7 +6,7 @@ var Section = require('./section')
 var Report = module.exports = function Report(reporters, req, res) {
   this.id = utils.generateId()
   this.reporters = reporters
-  this.typeData = {}
+  this.typeConfig = {}
   this.sections = []
   this.charts = []
   this.req = req
@@ -22,7 +22,7 @@ report.runReporters = function runReporters() {
     this.reporters.forEach(reporter => {
         var section = new Section({
             reporter,
-            typeData:this.typeData,
+            typeConfig:this.typeConfig,
             level:0
         })
 
@@ -48,12 +48,12 @@ report.getHTML = function getHTML(report) {
         html += section.getHTML()
     })
 
-    Object.keys(this.typeData).forEach(type => {
-        var data = this.typeData[type]
+    Object.keys(this.typeConfig).forEach(type => {
+        var config = this.typeConfig[type]
         var getScripts = Section.Types[type].getScripts
 
         if(getScripts) {
-            html += getScripts(data) || ''
+            html += getScripts(config) || ''
         }
     })
 
