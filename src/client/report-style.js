@@ -38,8 +38,9 @@ module.exports = `
             display:block;
             font-size:0.5em;
             opacity:0;
-            transform:translateY(0.5em);
+            transform:translateY(0.25em);
             transition:all 0.15s;
+            line-height:0.5;
         }
 
         h1 small,
@@ -60,4 +61,13 @@ module.exports = `
             font-size:0.9em;
         }
     </style>
+    <script>
+        window.onresize = function() {
+            var base = Math.min(window.outerWidth, window.outerHeight*1.25);
+            document.documentElement.style.fontSize = Math.pow(base, 0.3)/6.75 + 'em';
+            document.body.style.paddingLeft =
+            document.body.style.paddingRight = Math.pow(window.outerWidth, 0.5)/3 + '%';
+        };
+        setTimeout(window.onresize);
+    </script>
 `
