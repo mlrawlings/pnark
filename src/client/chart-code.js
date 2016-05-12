@@ -1,6 +1,6 @@
 var lave = require('lave')
 var generate = require('escodegen').generate
-var utils = require('./utils')
+var utils = require('../utils')
 
 module.exports = (charts) => {
     var chartTypes = JSON.stringify(utils.dedupe(charts.map(c => c.type.toLowerCase())))

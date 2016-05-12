@@ -1,5 +1,5 @@
 var Pnark = require('./src/pnark')
-var getInjectionCode = require('./src/injection-code')
+var getInjectionCode = require('./src/client/injection-code')
 
 module.exports = function(options) {
     var pnark = new Pnark(options)

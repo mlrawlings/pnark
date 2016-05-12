@@ -1,7 +1,7 @@
 var utils = require('./utils')
 var EventEmitter = require('events').EventEmitter
-var getChartCode = require('./chart-code')
-var style = require('./report-style')
+var getChartCode = require('./client/chart-code')
+var style = require('./client/report-style')
 
 var Report = module.exports = function Report(reporters, req, res) {
   this.id = utils.generateId()
