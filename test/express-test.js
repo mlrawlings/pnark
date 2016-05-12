@@ -61,6 +61,7 @@ describe('express', function() {
                         server.close();
                         if(main.after) main.after();
                         utils.generateId = _generateId;
+                        fs.unlinkSync(path.join(dir, REPORT_ID+'.html'))
                         done(err);
                     };
 
