@@ -51,8 +51,7 @@ A reporter is a function that takes three parameters:
 ```js
 module.exports = function reporter(report, req, res) {
     report.section('This is My Title')
-          .html('<strong>my content</strong>')
-          .end();
+          .html('<strong>my content</strong>');
 
     report.end();
 };

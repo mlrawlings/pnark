@@ -23,10 +23,10 @@ mySection.text('Hello World');
 ```
 
 ```js
-mySection.markdown('Hello **World**');
+mySection.markdown('Hello **World**'); //github flavored
 ```
 
-Charts, powered by [HighCharts](http://www.highcharts.com/) ([docs](http://api.highcharts.com/highcharts)/[live examples](http://www.highcharts.com/demo)):
+Charts, powered by [HighCharts](http://www.highcharts.com/) ([docs](http://api.highcharts.com/highcharts)/[examples](http://www.highcharts.com/demo)):
 
 ```js
 mySection.highchart({
