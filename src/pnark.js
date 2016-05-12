@@ -5,78 +5,78 @@ var PassThrough = require('stream').PassThrough
 var Report = require('./report')
 
 var Pnark = module.exports = function Pnark(options) {
-  this.reporters = { '*':[] }
-  this.reports = {}
-  this.reportDirectory = options.reportDirectory
+    this.reporters = { '*':[] }
+    this.reports = {}
+    this.reportDirectory = options.reportDirectory
 
-  this.setupReporters(options.reporters)
-  this.setupPlugins(options.plugins)
-  this.setupProfiles(options.profiles)
+    this.setupReporters(options.reporters)
+    this.setupPlugins(options.plugins)
+    this.setupProfiles(options.profiles)
 }
 
 var pnark = Pnark.prototype
 
 pnark.addToReporters = function addToReporters(key, value) {
-  this.reporters[key] = this.reporters[key] || []
-  if(Array.isArray(value)) {
-    this.reporters[key] = this.reporters[key].concat(value)
-  } else {
-    this.reporters[key].push(value)
-  }
+    this.reporters[key] = this.reporters[key] || []
+    if(Array.isArray(value)) {
+        this.reporters[key] = this.reporters[key].concat(value)
+    } else {
+        this.reporters[key].push(value)
+    }
 }
 
 pnark.setupPlugins = function setupPlugins(plugins) {
-  if(!plugins) return
+    if(!plugins) return
 
-  plugins.forEach(plugin => this.setupReporters(plugin.reporters))
-  plugins.forEach(plugin => this.setupProfiles(plugin.profiles))
+    plugins.forEach(plugin => this.setupReporters(plugin.reporters))
+    plugins.forEach(plugin => this.setupProfiles(plugin.profiles))
 }
 
 pnark.setupProfiles = function setupProfiles(profiles) {
-  if(typeof profiles === 'undefined') return
+    if(typeof profiles === 'undefined') return
 
-  if(profiles.constructor !== Object) {
-    throw new Error('profiles must be an object defining an array of namespaces and reporters')
-  }
-
-  var profileNames = Object.keys(profiles)
-
-  profileNames.forEach(name => {
-    var profile = profiles[name]
-
-    if(!Array.isArray(profile)) {
-      throw new Error('a profile must be an array of namespaces and reporters')
+    if(profiles.constructor !== Object) {
+        throw new Error('profiles must be an object defining an array of namespaces and reporters')
     }
 
-    profile.forEach(p => this.addToReporters(name, this.reporters[p]))
-  })
+    var profileNames = Object.keys(profiles)
+
+    profileNames.forEach(name => {
+        var profile = profiles[name]
+
+        if(!Array.isArray(profile)) {
+            throw new Error('a profile must be an array of namespaces and reporters')
+        }
+
+        profile.forEach(p => this.addToReporters(name, this.reporters[p]))
+    })
 }
 
 pnark.setupReporters = function setupReporters(reporters, ns) {
-  if(typeof reporters === 'undefined') return
+    if(typeof reporters === 'undefined') return
 
-  if(reporters.constructor !== Object) {
-    ns = ns || 'root'
-    throw new Error(ns + ' namespace must be an object of reporters')
-  }
-
-  var reporterNames = Object.keys(reporters)
-
-  reporterNames.forEach(name => {
-    var reporter = reporters[name]
-
-    if(ns) name = ns + ':' + name
-
-    var definition = { name, run:reporter }
-
-    if(typeof reporter == 'function') {
-      this.addToReporters('*', definition)
-      this.addToReporters(name, definition)
-      if(ns) this.addToReporters(ns, definition)
-    } else {
-      this.setupReporters(reporter, name)
+    if(reporters.constructor !== Object) {
+        ns = ns || 'root'
+        throw new Error(ns + ' namespace must be an object of reporters')
     }
-  })
+
+    var reporterNames = Object.keys(reporters)
+
+    reporterNames.forEach(name => {
+        var reporter = reporters[name]
+
+        if(ns) name = ns + ':' + name
+
+        var definition = { name, run:reporter }
+
+        if(typeof reporter == 'function') {
+            this.addToReporters('*', definition)
+            this.addToReporters(name, definition)
+            if(ns) this.addToReporters(ns, definition)
+        } else {
+            this.setupReporters(reporter, name)
+        }
+    })
 }
 
 pnark.generateReport = function(reporterNames, req, res) {

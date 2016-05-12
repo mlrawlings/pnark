@@ -4,15 +4,15 @@ var style = require('./client/report-style')
 var Section = require('./section')
 
 var Report = module.exports = function Report(reporters, req, res) {
-  this.id = utils.generateId()
-  this.reporters = reporters
-  this.typeConfig = {}
-  this.sections = []
-  this.charts = []
-  this.req = req
-  this.res = res
+    this.id = utils.generateId()
+    this.reporters = reporters
+    this.typeConfig = {}
+    this.sections = []
+    this.charts = []
+    this.req = req
+    this.res = res
 
-  this.runReporters()
+    this.runReporters()
 }
 
 var report = Report.prototype = Object.create(EventEmitter.prototype)
