@@ -36,9 +36,10 @@ report.runReporters = function runReporters() {
 }
 
 report.generate = function generate() {
-    setTimeout(() => {
-        this.emit('complete', this.getHTML())
-    })
+    if(!this.res.finished) {
+        return this.res.on('finish', () => this.generate())
+    }
+    this.emit('complete', this.getHTML())
 }
 
 report.getHTML = function getHTML(report) {
