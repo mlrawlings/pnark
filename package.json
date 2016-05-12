@@ -18,8 +18,6 @@
     "request": "^2.72.0"
   },
   "dependencies": {
-    "escodegen": "^1.8.0",
-    "lave": "^1.1.10",
     "marked": "^0.3.5"
   }
 }
