@@ -74,7 +74,7 @@ describe('express', function() {
                                 complete();
                             } else {
                                 if(error) {
-                                    return done(error);
+                                    return complete(error);
                                 }
                                 chai.expect(response.statusCode).to.equal(200);
 
@@ -98,7 +98,7 @@ describe('express', function() {
                                             complete();
                                         } else {
                                             if(error) {
-                                                return done(error);
+                                                return complete(error);
                                             }
                                             chai.expect(response.statusCode).to.equal(200);
 
