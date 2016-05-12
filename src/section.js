@@ -81,7 +81,7 @@ Section.registerType('markdown', {
     },
     getScripts: function(config) {
         if(config && config.codeHighlighting) return `
-            <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/agate.min.css" rel="stylesheet" />
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/github.min.css" rel="stylesheet" />
             <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
             <script>hljs.initHighlightingOnLoad();</script>
         `

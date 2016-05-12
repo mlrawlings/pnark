@@ -10,10 +10,16 @@ module.exports = `
 
         tt, code, kbd, samp {
             font-family:'SF UI Mono', 'Consolas', 'Inconsolata', 'Monaco', 'Roboto Mono', 'Droid Sans Mono', monospace;
-            border-radius:4px;
-            background-color: #f7f4ee;
-            color: #111;
-            padding: 0.1em 0.5em;
+            border-radius:3px;
+            background-color: rgba(0,0,0,0.04);
+            padding: 0.2em 0;
+            font-size:85%;
+        }
+
+        tt:before, code:before, kbd:before, samp:before,
+        tt:after, code:after, kbd:after, samp:after {
+            letter-spacing: -0.2em;
+            content: "\\00a0";
         }
 
         h1, h2, h3, h4, h5, h6 {
@@ -21,7 +27,7 @@ module.exports = `
             font-weight:500;
             margin-bottom:10px;
             font-size:1.5em;
-            color:#111;
+            color:#222;
         }
 
         h1 {
