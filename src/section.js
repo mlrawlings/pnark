@@ -20,6 +20,7 @@ Section.registerType = function(type, definition) {
             this.typeData[type] = undefined
         }
         this.content.push({ type, args:arguments })
+        return this
     }
     Section.Types[type] = definition
 }
