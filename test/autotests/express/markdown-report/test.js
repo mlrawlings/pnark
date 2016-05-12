@@ -6,7 +6,7 @@ exports.initApp = function(app, middleware) {
         reporters:{
             foo: (report, req, res) => {
                 report.section('My Title')
-                      .html('<p>Hello World</p>')
+                      .markdown('Hello **World**')
                 report.end()
             }
         }
@@ -29,5 +29,5 @@ exports.checkReportDOM = function(window, document, expect) {
 
     var paragraph = document.querySelector('p')
     expect(paragraph).to.exist
-    expect(paragraph.innerHTML).to.equal('Hello World')
+    expect(paragraph.innerHTML).to.equal('Hello <strong>World</strong>')
 }

@@ -17,7 +17,10 @@ describe('Pnark config', function() {
       },
     })
 
-    expect(pnark.reporters).to.eql({ '*':[{ name:'foo', run:reporterA }], 'foo':[{ name:'foo', run:reporterA }] })
+    expect(pnark.reporters).to.eql({
+        '*':[{ name:'foo', run:reporterA }],
+        'foo':[{ name:'foo', run:reporterA }]
+    })
   })
 
   it('should handle namespaced reporters', function() {
@@ -102,5 +105,69 @@ describe('Pnark config', function() {
       'bar':[{ name:'bar', run:reporterB }],
       'baz':[{ name:'baz', run:reporterC }],
     })
+  })
+
+  it('should allow you to get the reporters by comma separated string', function() {
+      var pnark = new Pnark({
+        reporters:{
+          'ns':{
+            'foo':reporterA,
+            'bar':reporterB,
+          },
+        },
+      })
+
+      var reporters = pnark.getReporters('ns:foo,ns:bar')
+
+      expect(reporters).to.eql([
+          { name:'ns:foo', run:reporterA },
+          { name:'ns:bar', run:reporterB }
+      ])
+  })
+
+  it('should allow you to get the reporters by array', function() {
+      var pnark = new Pnark({
+        reporters:{
+          'ns':{
+            'foo':reporterA,
+            'bar':reporterB,
+          },
+        },
+      })
+
+      var reporters = pnark.getReporters(['ns:foo','ns:bar'])
+
+      expect(reporters).to.eql([
+          { name:'ns:foo', run:reporterA },
+          { name:'ns:bar', run:reporterB }
+      ])
+  })
+
+  describe('incorrect usage', function() {
+      it('non-object passed as reporters', function() {
+            expect(() => new Pnark({
+                reporters:[reporterA],
+            })).to.throw(Error)
+      })
+
+      it('non-object passed as profiles', function() {
+            expect(() => new Pnark({
+                profiles:[],
+                reporters:{
+                    'foo':reporterA,
+                },
+            })).to.throw(Error)
+      })
+
+      it('non-array passed as profile', function() {
+            expect(() => new Pnark({
+                profiles:{
+                    foo2:'foo',
+                },
+                reporters:{
+                    'foo':reporterA,
+                },
+            })).to.throw(Error)
+      })
   })
 })

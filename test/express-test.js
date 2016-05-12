@@ -12,7 +12,7 @@ var jsdom = require("jsdom").jsdom;
 var middleware = require('../express');
 var utils = require('../src/utils');
 
-const REPORT_ID = '2015-01-01-at-00-00-00000';
+const REPORT_ID = 'test-report';
 
 describe('express', function() {
     var autoTestDir = path.join(__dirname, 'autotests/express');
@@ -61,7 +61,6 @@ describe('express', function() {
                         server.close();
                         if(main.after) main.after();
                         utils.generateId = _generateId;
-                        fs.unlinkSync(path.join(dir, REPORT_ID+'.html'))
                         done(err);
                     };
 
@@ -82,11 +81,15 @@ describe('express', function() {
                                     var window = jsdom(body).defaultView;
                                     window.onerror = function(message, source, lineno, colno, error) {
                                         complete(error);
-                                    }
+                                    };
                                     if(main.checkDOM.length == 4) {
-                                        main.checkDOM(window, window.document, chai.expect, complete);
+                                        main.checkDOM(window, window.document, chai.expect, () => {
+                                            window.onerror = function() {};
+                                            complete();
+                                        });
                                     } else {
                                         main.checkDOM(window, window.document, chai.expect);
+                                        window.onerror = function() {};
                                         complete();
                                     }
                                 } else if(main.checkReportDOM || main.checkReportResponse) {
@@ -105,11 +108,15 @@ describe('express', function() {
                                             var window = jsdom(body).defaultView;
                                             window.onerror = function(message, source, lineno, colno, error) {
                                                 complete(error);
-                                            }
+                                            };
                                             if(main.checkReportDOM.length == 4) {
-                                                main.checkReportDOM(window, window.document, chai.expect, complete);
+                                                main.checkReportDOM(window, window.document, chai.expect, () => {
+                                                    window.onerror = function() {};
+                                                    complete();
+                                                });
                                             } else {
                                                 main.checkReportDOM(window, window.document, chai.expect);
+                                                window.onerror = function() {};
                                                 complete();
                                             }
                                         }

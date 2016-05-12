@@ -6,7 +6,7 @@ exports.initApp = function(app, middleware) {
         reporters:{
             foo: (report, req, res) => {
                 report.section('My Title')
-                      .html('<p>Hello World</p>')
+                      .text('Hello World')
                 report.end()
             }
         }

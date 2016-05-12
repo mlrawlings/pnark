@@ -9,15 +9,21 @@ exports.initApp = function(app, middleware) {
     }))
 
     app.get('/test', function(req, res) {
-        res.set('Content-Type', 'text/html')
-        res.send(`
+        var content = `
             <!doctype html>
             <html>
             <body>
                 <div>Hello World</div>
             </body>
             </html>
-        `)
+        `
+
+        res.writeHead(200, {
+            'Content-Type':'text/html',
+            'Content-Length':''+content.length,
+        })
+        res.write(content)
+        res.end()
     })
 }
 

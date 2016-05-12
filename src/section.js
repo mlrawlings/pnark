@@ -63,7 +63,7 @@ Section.registerType('html', {
 })
 
 Section.registerType('text', {
-    getHTML: (text) => text.replace(/\n\n+/g, '<br>')
+    getHTML: (text) => '<p>'+text.trim().replace(/\n\n+/g, '</p><p>')+'</p>'
 })
 
 Section.registerType('markdown', {

@@ -5,9 +5,9 @@ exports.initApp = function(app, middleware) {
         reportDirectory:__dirname,
         reporters:{
             foo: (report, req, res) => {
-                report.section('My Title')
-                      .html('<p>Hello World</p>')
-                report.end()
+                report.section('My Title').html('<p>hi</p>')
+
+                setTimeout(() => report.end(), 1000)
             }
         }
     }))
@@ -20,14 +20,6 @@ exports.initApp = function(app, middleware) {
 
 exports.checkReportDOM = function(window, document, expect) {
     var title = document.querySelector('h1')
-    expect(title).to.exist
+    expect(title.innerHTML).to.include('foo')
     expect(title.innerHTML).to.include('My Title')
-
-    var subtitle = document.querySelector('h1 small')
-    expect(subtitle).to.exist
-    expect(subtitle.innerHTML).to.equal('foo')
-
-    var paragraph = document.querySelector('p')
-    expect(paragraph).to.exist
-    expect(paragraph.innerHTML).to.equal('Hello World')
 }

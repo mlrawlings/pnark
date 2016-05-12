@@ -35,7 +35,7 @@ pnark.setupPlugins = function setupPlugins(plugins) {
 pnark.setupProfiles = function setupProfiles(profiles) {
   if(typeof profiles === 'undefined') return
 
-  if(typeof profiles !== 'object') {
+  if(profiles.constructor !== Object) {
     throw new Error('profiles must be an object defining an array of namespaces and reporters')
   }
 
@@ -55,7 +55,7 @@ pnark.setupProfiles = function setupProfiles(profiles) {
 pnark.setupReporters = function setupReporters(reporters, ns) {
   if(typeof reporters === 'undefined') return
 
-  if(typeof reporters !== 'object') {
+  if(reporters.constructor !== Object) {
     ns = ns || 'root'
     throw new Error(ns + ' namespace must be an object of reporters')
   }
@@ -123,7 +123,6 @@ pnark.getReport = function(id) {
     if(report) {
         var stream = new PassThrough()
         report.on('complete', html => {
-            console.log('html', html)
             stream.write(html)
             stream.end()
         })
