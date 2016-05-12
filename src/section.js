@@ -1,9 +1,9 @@
 var Section = module.exports = function Section(config) {
-    if(typeof config == 'object') {
-        Object.keys(config).forEach(key => {
-            this[key] = config[key]
-        })
-    }
+    this.title = config.title
+    this.parent = config.parent
+    this.reporter = config.reporter
+    this.typeData = config.typeData
+    this.level = config.level || 0
 
     this.content = []
 }
