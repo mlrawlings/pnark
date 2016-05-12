@@ -1,7 +1,7 @@
 var Pnark = require('../src/pnark')
 var expect = require('chai').expect
 
-describe('Pnark', function() {
+describe('Pnark config', function() {
   var reporterA = function(a){}
   var reporterB = function(b){}
   var reporterC = function(c){}
