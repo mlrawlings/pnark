@@ -12,6 +12,8 @@ var jsdom = require("jsdom").jsdom;
 var middleware = require('../express');
 var utils = require('../src/utils');
 
+const REPORT_ID = '2015-01-01-at-00-00-00000';
+
 describe('express', function() {
     var autoTestDir = path.join(__dirname, 'autotests/express');
 
@@ -53,9 +55,7 @@ describe('express', function() {
                     var address = `http://localhost:${port}${requestPath}`;
                     var _generateId = utils.generateId;
 
-                    utils.generateId = function generateId() {
-                        return '2015-01-01-at-00-00-00000';
-                    };
+                    utils.generateId = () => REPORT_ID;
 
                     var complete = (err) => {
                         server.close();
@@ -78,46 +78,38 @@ describe('express', function() {
                                 chai.expect(response.statusCode).to.equal(200);
 
                                 if(main.checkDOM)  {
-                                    var jsdomOptions = {
-                                        url:address,
-                                        features: {
-                                          FetchExternalResources : ['script']
-                                        }
+                                    var window = jsdom(body).defaultView;
+                                    window.onerror = function(message, source, lineno, colno, error) {
+                                        complete(error);
                                     }
-                                    var window = jsdom(body, jsdomOptions).defaultView;
                                     if(main.checkDOM.length == 4) {
                                         main.checkDOM(window, window.document, chai.expect, complete);
                                     } else {
                                         main.checkDOM(window, window.document, chai.expect);
                                         complete();
                                     }
-                                } else if(main.checkReportDOM) {
-                                    var jsdomOptions = {
-                                        url:address,
-                                        features: {
-                                          FetchExternalResources : ['script', 'iframe']
-                                        }
-                                    }
-                                    var window = jsdom(body, jsdomOptions).defaultView;
-                                    window.addEventListener('load', function() {
-                                        var iframe = window.document.querySelector('#pnark-report iframe')
-                                        iframe.addEventListener('load', function() {
-                                            try {
-                                                if(main.checkReportDOM.length == 4) {
-                                                    main.checkReportDOM(iframe.contentWindow, iframe.contentWindow.document, chai.expect, complete);
-                                                } else {
-                                                    console.log('b')
-                                                    main.checkReportDOM(iframe.contentWindow, iframe.contentWindow.document, chai.expect);
-                                                    console.log('c')
-                                                    complete();
-                                                }
-                                            } catch(e) {
-                                                complete(e);
+                                } else if(main.checkReportDOM || main.checkReportResponse) {
+                                    request(address+'&pnarkID='+REPORT_ID, function(error, response, body) {
+                                        if(main.checkReportResponse) {
+                                            response.body = body;
+                                            response.error = error;
+                                            main.checkReportResponse(response, chai.expect, helpers);
+                                            complete();
+                                        } else {
+                                            var window = jsdom(body).defaultView;
+                                            window.onerror = function(message, source, lineno, colno, error) {
+                                                complete(error);
                                             }
-                                        })
-                                    })
+                                            if(main.checkReportDOM.length == 4) {
+                                                main.checkReportDOM(window, window.document, chai.expect, complete);
+                                            } else {
+                                                main.checkReportDOM(window, window.document, chai.expect);
+                                                complete();
+                                            }
+                                        }
+                                    });
                                 } else {
-                                    helpers.compare(body, '.html');
+                                    throw new Error('This test has no check function.  You should define checkResponse, checkDOM, checkReportResponse, or checkReportDOM');
                                 }
                             }
                         } catch(error) {
