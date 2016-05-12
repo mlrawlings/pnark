@@ -8,17 +8,18 @@ var Section = module.exports = function Section(config) {
     this.content = []
 }
 
-Section.Types = {
-    'subsection':{
-        getHTML:(section) => section.getHTML()
-    }
-}
+Section.Types = {}
 
 Section.registerType = function(type, definition) {
     Section.prototype[type] = function() {
         if(!(type in this.typeData)) {
             this.typeData[type] = undefined
         }
+
+        if(Section.Types[type].helper) {
+            return Section.Types[type].helper.apply(this, arguments)
+        }
+
         this.content.push({ type, args:arguments })
         return this
     }
@@ -26,20 +27,6 @@ Section.registerType = function(type, definition) {
 }
 
 var section = Section.prototype
-
-section.section = function section(title) {
-    var subsection = new Section({
-        title,
-        parent: this,
-        reporter: this.reporter,
-        typeData:this.typeData,
-        level: this.level + 1
-    })
-
-    this.content.push({ type:'subsection', args:[subsection] })
-
-    return subsection
-}
 
 section.end = function end() {
     return this.parent
@@ -61,6 +48,23 @@ section.getHTML = function getHTML() {
 
     return `<section>${html}</section>`
 }
+
+Section.registerType('section', {
+    helper: function(title) {
+        var subsection = new Section({
+            title,
+            parent: this,
+            reporter: this.reporter,
+            typeData:this.typeData,
+            level: this.level + 1
+        })
+
+        this.content.push({ type:'section', args:[subsection] })
+
+        return subsection
+    },
+    getHTML: (section) => section.getHTML()
+})
 
 Section.registerType('html', {
     getHTML: (html) => html
@@ -86,11 +90,10 @@ Section.registerType('markdown', {
 })
 
 Section.registerType('json', {
-    getHTML: function(json) {
+    helper: function(json) {
         var markdown = '```json\n'+JSON.stringify(json, null, 2)+'\n```'
-        return Section.Types.markdown.getHTML.call(this, markdown)
-    },
-    getScripts: Section.Types.markdown.getScripts
+        return this.markdown(markdown)
+    }
 })
 
 Section.registerType('highchart', {
