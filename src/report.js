@@ -53,7 +53,7 @@ report.getHTML = function getHTML(report) {
         var getScripts = Section.Types[type].getScripts
 
         if(getScripts) {
-            html += getScripts(data)
+            html += getScripts(data) || ''
         }
     })
 
