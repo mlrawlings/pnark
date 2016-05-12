@@ -97,6 +97,11 @@ describe('express', function() {
                                             main.checkReportResponse(response, chai.expect, helpers);
                                             complete();
                                         } else {
+                                            if(error) {
+                                                return done(error);
+                                            }
+                                            chai.expect(response.statusCode).to.equal(200);
+
                                             var window = jsdom(body).defaultView;
                                             window.onerror = function(message, source, lineno, colno, error) {
                                                 complete(error);
