@@ -92,6 +92,16 @@ Section.registerType('markdown', {
             <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/styles/github.min.css" rel="stylesheet" />
             <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
             <script>hljs.initHighlightingOnLoad();</script>
+            <style>
+                .hljs {
+                    border:0.588em solid #f6f6f6;
+                    background-color:#fbfbfb;
+                    padding:1em;
+                }
+                .hljs:before, .hljs:after {
+                    content:'';
+                }
+            </style>
         `
     }
 })
@@ -116,6 +126,16 @@ Section.registerType('highchart', {
     },
     getScripts: function(config) {
         return `
+            <style>
+                [id^=highchart-] {
+                    border:0.5em solid #f6f6f6;
+                    background: #f6f6f6;
+                    border-radius:3px;
+                }
+                .highcharts-container {
+                    border-radius:2px;
+                }
+            </style>
             <script src="https://code.highcharts.com/highcharts.js"></script>
             <script>
                 var charts = ${JSON.stringify(config.charts)};
