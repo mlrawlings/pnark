@@ -29,4 +29,7 @@ exports.checkReportDOM = function(window, document, expect) {
 
     var code = document.querySelector('code.lang-json')
     expect(code).to.exist
+
+    var script = document.querySelector('script[src*=highlight]')
+    expect(script).to.exist
 }

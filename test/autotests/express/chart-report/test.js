@@ -7,7 +7,7 @@ exports.initApp = function(app, middleware) {
             foo: (report, req, res) => {
                 var section = report.section('My Title')
 
-                section.highchart({
+                section.chart({
                     title: {
                         text: 'Monthly Average Temperature'
                     },

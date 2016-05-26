@@ -11,6 +11,23 @@ exports.initApp = function(app, middleware) {
                           .end()
                       .section('Section 2')
                           .markdown('Oh, *YES!*')
+                          .chart({
+                              title: {
+                                  text: '\u00a0'
+                              },
+                              xAxis: {
+                                  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                              },
+                              yAxis: {
+                                  title: 'Temperature (°C)'
+                              },
+                              tooltip: {
+                                  valueSuffix: '°C'
+                              },
+                              series: [{
+                                  data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+                              }]
+                          })
                           .end()
                       .end()
             }

@@ -85,13 +85,13 @@ pnark.generateReport = function(reporterNames, req, res) {
 
     this.reports[report.id] = report
 
-    report.on('complete', html => {
+    Promise.resolve(report.results).then(results => {
         delete this.reports[report.id]
 
         var reportFilePath = this.getReportPath(report.id)
         var stream = fs.createWriteStream(reportFilePath)
 
-        stream.write(html)
+        stream.write(results.html)
         stream.end()
     })
 
@@ -122,8 +122,8 @@ pnark.getReport = function(id) {
 
     if(report) {
         var stream = new PassThrough()
-        report.on('complete', html => {
-            stream.write(html)
+        Promise.resolve(report.results).then(results => {
+            stream.write(results.html)
             stream.end()
         })
         return stream;
