@@ -32,7 +32,18 @@ report.runReporters = function runReporters() {
             })
 
             section.end = () => {
-                if(!--remaining) resolve()
+                if(reporter.deactivate) {
+                    reporter.deactivate()
+                    reporter.isActive = false
+                }
+                if(!--remaining) {
+                    resolve()
+                }
+            }
+
+            if(reporter.activate && !reporter.isActive) {
+                reporter.activate()
+                reporter.isActive = true
             }
 
             this.sections.push(section)

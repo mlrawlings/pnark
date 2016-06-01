@@ -63,19 +63,27 @@ pnark.setupReporters = function setupReporters(reporters, ns) {
     var reporterNames = Object.keys(reporters)
 
     reporterNames.forEach(name => {
+        var definition
         var reporter = reporters[name]
 
         if(ns) name = ns + ':' + name
 
-        var definition = { name, run:reporter }
-
-        if(typeof reporter == 'function') {
-            this.addToReporters('*', definition)
-            this.addToReporters(name, definition)
-            if(ns) this.addToReporters(ns, definition)
+        if(reporter instanceof Function) {
+            definition = { name, run:reporter }
+        } else if(reporter.onRequest instanceof Function) {
+            definition = {
+                name,
+                run:reporter.onRequest,
+                activate:reporter.activate,
+                deactivate:reporter.deactivate,
+            }
         } else {
-            this.setupReporters(reporter, name)
+            return this.setupReporters(reporter, name)
         }
+
+        this.addToReporters('*', definition)
+        this.addToReporters(name, definition)
+        if(ns) this.addToReporters(ns, definition)
     })
 }
 
