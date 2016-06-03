@@ -1,5 +1,9 @@
 # pnark: page speed reporter
 
+[![Build Status](https://travis-ci.org/mlrawlings/pnark.svg?branch=master)](https://travis-ci.org/mlrawlings/pnark)
+[![Coverage Status](https://coveralls.io/repos/github/mlrawlings/pnark/badge.svg?branch=master)](https://coveralls.io/github/mlrawlings/pnark?branch=master)
+
+
 ## Basic usage with express & marko
 
 Add the express middleware
