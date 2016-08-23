@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/mlrawlings/pnark.svg?branch=master)](https://travis-ci.org/mlrawlings/pnark)
 [![Coverage Status](https://coveralls.io/repos/github/mlrawlings/pnark/badge.svg?branch=master)](https://coveralls.io/github/mlrawlings/pnark?branch=master)
 
-it's pronounced [***närk***](https://ssl.gstatic.com/dictionary/static/sounds/de/0/nark.mp3) (the `p` is silent)
+pnark (pronounced [***närk***](https://ssl.gstatic.com/dictionary/static/sounds/de/0/nark.mp3) - the `p` is silent) is a module that allows you to get insight into what's happening on your server during the lifecycle of a request.
 
 ## Basic usage with express
 
