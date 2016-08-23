@@ -15,9 +15,10 @@ app.use(require('pnark/express').middleware({
 ```
 
 **2.** Visit your page in the browser and click the icon in the bottom right of your screen to view the report
+![](https://raw.githubusercontent.com/mlrawlings/pnark/master/screenshots/how-to-open.png)
 
 **3.** Read the report, become a better developer
-
+![](https://raw.githubusercontent.com/mlrawlings/pnark/master/screenshots/report-preview.png)
 
 ## Writing plugins
 
