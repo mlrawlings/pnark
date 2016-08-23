@@ -3,99 +3,22 @@
 [![Build Status](https://travis-ci.org/mlrawlings/pnark.svg?branch=master)](https://travis-ci.org/mlrawlings/pnark)
 [![Coverage Status](https://coveralls.io/repos/github/mlrawlings/pnark/badge.svg?branch=master)](https://coveralls.io/github/mlrawlings/pnark?branch=master)
 
+it's pronounced [***närk***](https://ssl.gstatic.com/dictionary/static/sounds/de/0/nark.mp3) (the `p` is silent)
 
-## Basic usage with express & marko
+## Basic usage with express
 
-Add the express middleware
+**1.** Add the express middleware and some plugins:
 ```js
 app.use(require('pnark/express').middleware({
-  plugins: [require('pnark-marko'), require('pnark-tessa')]
+  plugins: [require('pnark-http'), require('pnark-fs')]
 }));
 ```
 
-Visit your page in the browser, adding the `pnark=*` parameter
-```
-http://localhost:8080/path/to/page?pnark=*
-```
+**2.** Visit your page in the browser and click the icon in the bottom right of your screen to view the report
 
-Only show a specific plugin's information:
-```
-http://localhost:8080/path/to/page?pnark=marko
-```
+**3.** Read the report, become a better developer
 
-## Profiles
-
-If there are a set of reporters or namespaces that you want to easily run together, you can create a profile:
-
-```js
-app.use(require('pnark/express').middleware({
-  profiles: {
-    'tesko':['marko', 'tessa'],
-  },
-  plugins: [require('pnark-marko'), require('pnark-tessa')],
-}));
-```
-
-Only show a specific profile:
-```
-http://localhost:8080/path/to/page?pnark=tesko
-```
 
 ## Writing plugins
 
-Plugins allow you to define a group of reporters, namespaces, and profiles.
-
-### Writing a reporter
-
-A reporter is a function that takes three parameters:
-- `report`: the pnark report
-- `req`: the current http request
-- `res`: the response for the current http request
-
-```js
-module.exports = function reporter(report, req, res) {
-    report.section('This is My Title')
-          .html('<strong>my content</strong>');
-
-    report.end();
-};
-```
-Learn more in the [reporters docs](docs/reporters.md).
-
-### Exporting a Reporter
-
-```js
-module.exports = {
-  reporters: {
-    'my-reporter':function(report, req, res) { /* ... */ },
-  }
-}
-```
-
-Only show a specific reporter:
-```
-http://localhost:8080/path/to/page?pnark=my-reporter
-```
-
-### Exporting Namespaced Reporters
-
-```js
-module.exports = {
-  reporters: {
-    'marko':{
-      'async-fragment':function(report, req, res) { /* ... */ },
-      'another-reporter':function(report, req, res) { /* ... */ },
-    },
-  }
-}
-```
-
-Only show a specific namespace:
-```
-http://localhost:8080/path/to/page?pnark=marko
-```
-Only show a specific reporter in a namespace:
-```
-http://localhost:8080/path/to/page?pnark=marko:async-fragment
-```
-
+*Coming Soon*
