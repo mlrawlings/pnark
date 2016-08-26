@@ -20,6 +20,12 @@ app.use(require('pnark/express').middleware({
 **3.** Read the report, become a better developer
 ![](https://raw.githubusercontent.com/mlrawlings/pnark/master/screenshots/report-preview.png)
 
+## Available plugins
+
+- [pnark-http](https://www.npmjs.com/package/pnark-http)
+- [pnark-log](https://www.npmjs.com/package/pnark-log)
+- [pnark-fs](https://www.npmjs.com/package/pnark-fs)
+
 ## Writing plugins
 
 *Coming Soon*
