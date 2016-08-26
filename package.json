@@ -1,7 +1,7 @@
 {
   "name": "pnark",
   "version": "1.0.0",
-  "description": "",
+  "description": "get insight into what's happening on your server during the lifecycle of a request",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- --ui bdd --reporter spec ./test",
