@@ -93,7 +93,7 @@ describe('express', function() {
                                         complete();
                                     }
                                 } else if(main.checkReportDOM || main.checkReportResponse) {
-                                    request(address+'&pnarkID='+REPORT_ID, function(error, response, body) {
+                                    request(address+'?pnarkID='+REPORT_ID, function(error, response, body) {
                                         if(main.checkReportResponse) {
                                             response.body = body;
                                             response.error = error;

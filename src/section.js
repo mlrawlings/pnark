@@ -1,103 +1,121 @@
-var Section = module.exports = function Section(config) {
-    this.title = config.title
-    this.parent = config.parent
-    this.reporter = config.reporter
-    this.typeConfig = config.typeConfig
-    this.level = config.level || 0
+"use strict"
 
-    this.content = []
-}
-
-var section = Section.prototype
-
-section.html = function(html) {
-    return this.write(html, 'html')
-}
-
-section.markdown = function(markdown) {
-    return this.write(markdown, 'markdown')
-}
-
-section.json = function(data) {
-    return this.write(data, 'json')
-}
-
-section.text = function(text) {
-    return this.write(text, 'text')
-}
-
-section.chart = function(data) {
-    return this.write(data, 'chart')
-}
-
-section.section = function(title) {
-    var section = new Section({
-        title,
-        parent: this,
-        reporter: this.reporter,
-        typeConfig:this.typeConfig,
-        level: this.level + 1
-    })
-
-    this.write(section, 'section')
-
-    return section
-}
-
-section.write = function write(data, formatter) {
-    if(!formatter) {
-        formatter = Section.formatters.text
-    }
-    if(typeof formatter === 'string') {
-        formatter = Section.formatters[formatter]
-    }
-    this.content.push({ data, formatter })
-    return this
-}
-
-section.end = function end() {
-    if(arguments.length) {
-        this.write.apply(this, arguments)
-    }
-    return this.parent
-}
-
-section.format = function format() {
-    var html = ''
-    var text = ''
-    var resources = { css:[], js:[] }
-
-    if(this.title) {
-        html += `<h${this.level}>
-            <small>${this.reporter.name}</small>
-            ${this.title}
-        </h${this.level}>`
-
-        text += this.title + ' | ' + this.reporter.name + '\n'
+class Section {
+    constructor(config) {
+        this.id = config.id
+        this._title = config.title
+        this.parent = config.parent
+        this.report = config.report
+        this.reporter = config.reporter
+        this.level = config.level || 0
+        this.content = []
     }
 
-    this.content.forEach(content => {
-        var data = content.data
-        var result = content.formatter(content.data)
+    title(title) {
+        this._title = title
+        return this
+    }
 
-        html += result.html
-        text += '\n' + result.text + '\n'
+    collect() {
+        return this.report.collect.apply(this.report, arguments)
+    }
 
-        if(result.resources && result.resources.css) {
-            [].push.apply(resources.css, result.resources.css)
+    subscribeTo() {
+        return this.report.subscribeTo.apply(this.report, arguments)
+    }
+
+    html(html) {
+        return this.write(html, 'html')
+    }
+
+    markdown(markdown) {
+        return this.write(markdown, 'markdown')
+    }
+
+    json(data) {
+        return this.write(data, 'json')
+    }
+
+    text(text) {
+        return this.write(text, 'text')
+    }
+
+    chart(data) {
+        return this.write(data, 'chart')
+    }
+
+    section(title, id) {
+        var section = new Section({
+            id,
+            title,
+            parent: this,
+            report: this.report,
+            reporter: this.reporter,
+            level: this.level + 1
+        })
+
+        this.write(section, 'section')
+
+        return section
+    }
+
+    write(data, formatter) {
+        if(!formatter) {
+            formatter = Section.formatters.text
+        }
+        if(typeof formatter === 'string') {
+            formatter = Section.formatters[formatter]
+        }
+        this.content.push({ data, formatter })
+        return this
+    }
+
+    up() {
+        return this.parent
+    }
+
+    end() {
+        return this.report.end()
+    }
+
+    format() {
+        var html = ''
+        var text = ''
+        var resources = { css:[], js:[] }
+
+        if(this._title) {
+            html += `<h${this.level}${this.id ? ' id="'+this.id+'"' : ''}>
+                ${this._title}
+            </h${this.level}>`
+
+            text += this._title + ' | ' + this.reporter.name + '\n'
         }
 
-        if(result.resources && result.resources.js) {
-            [].push.apply(resources.js, result.resources.js)
-        }
-    })
+        this.content.forEach(content => {
+            var data = content.data
+            var result = content.formatter(content.data)
 
-    return {
-        html:`<section>${html}</section>`,
-        text,
-        resources
+            html += result.html
+            text += '\n' + result.text + '\n'
+
+            if(result.resources && result.resources.css) {
+                [].push.apply(resources.css, result.resources.css)
+            }
+
+            if(result.resources && result.resources.js) {
+                [].push.apply(resources.js, result.resources.js)
+            }
+        })
+
+        return {
+            html:`<section>${html}</section>`,
+            text,
+            resources
+        }
     }
 }
+
+module.exports = Section
 
 Section.formatters = {}
 
@@ -151,11 +169,14 @@ Section.formatters.json = (data) => {
 }
 
 Section.formatters.chart = (data) => {
+    var lave = require('lave')
+    var generate = require('escodegen').generate
     var resources = { css:[], js:[] }
     var chartId = `highchart-${Math.floor(Math.random()*1000000000)}`
 
     data.chart = data.chart || {}
     data.chart.renderTo = chartId
+    var dataCode = lave(data, { generate, format:'function' }).replace(/;$/, '()')
 
     resources.css.push(`<style>
         [id^=highchart-] {
@@ -169,8 +190,9 @@ Section.formatters.chart = (data) => {
     </style>`)
 
     resources.js.push('https://code.highcharts.com/highcharts.js')
+    resources.js.push('https://code.highcharts.com/highcharts-more.js')
     resources.js.push(`<script>
-        new Highcharts.Chart(${JSON.stringify(data)});
+        new Highcharts.Chart(${dataCode});
     </script>`)
 
     return {

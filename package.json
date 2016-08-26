@@ -20,7 +20,11 @@
     "request": "^2.72.0"
   },
   "dependencies": {
+    "escodegen": "^1.8.0",
+    "lave": "^1.1.10",
     "marked": "^0.3.5",
-    "pretty": "^1.0.0"
+    "mkdirp": "^0.5.1",
+    "pretty": "^1.0.0",
+    "time-ms": "^1.0.0"
   }
 }

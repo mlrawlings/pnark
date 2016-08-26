@@ -57,27 +57,14 @@ mySection.highchart({
 You can also create subsections:
 
 ```js
-var additionalInformation = mySection.subsection('Additional Information')
+var additionalInformation = mySection.section('Additional Information')
 ```
 
 Which also have the same available methods:
 
 ```js
 additionalInformation.html('<p>More info</p>')
-additionalInformation.subsection('Another Level!')
-```
-
-You can also chain sections together:
-
-```js
-report.section('My Section')
-          .html('<p>Hello World</p>')
-          .subsection('Additional Information')
-              .html('<p>More Info</p>')
-              .end()
-          .end()
-      .section('Another Section')
-          .text('This is important')
+additionalInformation.section('Another Level!')
 ```
 
 Call `report.end()` when you are done.

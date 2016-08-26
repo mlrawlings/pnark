@@ -1,11 +1,11 @@
-exports.requestPath = '/test?pnark=*'
+exports.requestPath = '/test'
 
 exports.initApp = function(app, middleware) {
     app.use(middleware({
         reportDirectory:__dirname,
-        reporters:{
-            foo: (report, req, res) => { report.end() }
-        }
+        plugins:[pnark => {
+            pnark.addReporter('foo', report => { report.end() })
+        }]
     }))
 
     app.get('/test', function(req, res) {
@@ -27,7 +27,7 @@ exports.checkDOM = function(window, document, expect, done) {
     window.addEventListener('load', function() {
         var iframe = document.querySelector('#pnark-report iframe')
         expect(iframe).to.exist
-        expect(iframe.getAttribute('src')).to.equal('/test?pnark=*&pnarkID=test-report')
+        expect(iframe.getAttribute('src')).to.equal('/test?pnarkID=test-report')
         done()
     })
 }

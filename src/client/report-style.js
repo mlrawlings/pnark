@@ -6,6 +6,8 @@ module.exports = `
             padding:0;
             margin:0;
             color:#333;
+            margin-top:50px;
+            position:relative;
         }
 
         tt, code, kbd, samp {
@@ -69,17 +71,93 @@ module.exports = `
             padding-top:1em;
         }
 
-        section section {
+        section.report section {
             font-size:0.9em;
+        }
+
+        section.report {
+            position:absolute;
+            width:100%;
+            top:0; left:-100%;
+            opacity:0;
+            pointer-events:none;
+            z-index:-1;
+        }
+
+        section.report.selected {
+            left:0;
+            opacity:1;
+            pointer-events:inherit;
+            z-index:1;
+        }
+
+        .tabbar {
+            position:fixed;
+            top:0; left:0; right:0;
+            width:100%; height:50px;
+            background:#ccc;
+            text-align:center;
+            z-index:9999999;
+        }
+
+        .tab {
+            cursor:pointer;
+            height:26px;
+            padding:12px 20px;
+            background:#ddd;
+            display:inline-block;
+        }
+
+        .tab.selected {
+            background:#eee;
         }
     </style>
     <script>
         window.onresize = function() {
             var base = Math.min(window.outerWidth, window.outerHeight*1.25);
             document.documentElement.style.fontSize = Math.pow(base, 0.3)/6.75 + 'em';
-            document.body.style.paddingLeft =
-            document.body.style.paddingRight = Math.pow(window.outerWidth, 0.5)/3 + '%';
+            document.body.style.marginLeft =
+            document.body.style.marginRight = Math.pow(window.outerWidth, 0.5)/3 + '%';
         };
         setTimeout(window.onresize);
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var tabbar = document.querySelector('.tabbar');
+            var sections = document.querySelectorAll('body > section');
+            var currentSection = sections[0];
+            var currentTab;
+            ;[].forEach.call(sections, function(section, index) {
+                var header = section.querySelector('h1');
+                var text = header.textContent;
+                var id = 'tab-'+index;
+                var tab = document.createElement('div');
+
+                section.id = id;
+                section.removeChild(header);
+
+                tab.className = 'tab';
+                tab.innerHTML = text;
+                tab.addEventListener('click', function() {
+                    currentSection.className = 'report';
+                    section.className = 'report selected';
+                    currentSection = section;
+                    currentTab.className = 'tab';
+                    tab.className = 'tab selected';
+                    currentTab = tab;
+                    window.scrollTo(0, 0);
+                })
+
+                if(section != currentSection) {
+                    section.className = 'report';
+                } else {
+                    currentTab = tab;
+                    currentTab.className = 'tab selected';
+                    currentSection.className = 'report selected';
+                }
+
+                tabbar.appendChild(tab);
+            });
+        });
     </script>
 `

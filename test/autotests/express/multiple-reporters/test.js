@@ -1,18 +1,18 @@
-exports.requestPath = '/test?pnark=*'
+exports.requestPath = '/test'
 
 exports.initApp = function(app, middleware) {
     app.use(middleware({
         reportDirectory:__dirname,
-        reporters:{
-            foo: (report, req, res) => {
+        plugins:[pnark => {
+            pnark.addReporter('foo', report => {
                 report.section('My Title').html('<p>hi</p>')
                 report.end()
-            },
-            bar: (report, req, res) => {
+            })
+            pnark.addReporter('bar', report => {
                 report.section('My Other Title').html('<p>hi again</p>')
                 report.end()
-            }
-        }
+            })
+        }]
     }))
 
     app.get('/test', function(req, res) {
@@ -22,11 +22,9 @@ exports.initApp = function(app, middleware) {
 }
 
 exports.checkReportDOM = function(window, document, expect) {
-    var titles = document.querySelectorAll('h1')
+    var titles = document.querySelectorAll('h2')
 
     expect(titles.length).to.equal(2)
-    expect(titles[0].innerHTML).to.include('foo')
     expect(titles[0].innerHTML).to.include('My Title')
-    expect(titles[1].innerHTML).to.include('bar')
     expect(titles[1].innerHTML).to.include('My Other Title')
 }

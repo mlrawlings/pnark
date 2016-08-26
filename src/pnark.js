@@ -1,141 +1,69 @@
+"use strict"
+
 var fs = require('fs')
 var path = require('path')
+var mkdirp = require('mkdirp')
 var utils = require('./utils')
 var PassThrough = require('stream').PassThrough
 var Report = require('./report')
 
-var Pnark = module.exports = function Pnark(options) {
-    this.reporters = { '*':[] }
-    this.reports = {}
-    this.reportDirectory = options.reportDirectory
+module.exports = class Pnark{
+    constructor(options) {
+        options = options || {}
 
-    this.setupReporters(options.reporters)
-    this.setupPlugins(options.plugins)
-    this.setupProfiles(options.profiles)
-}
+        this.reports = {}
+        this.reporters = []
+        this.reportDirectory = options.reportDirectory || path.join(process.cwd(), '.cache/pnark')
 
-var pnark = Pnark.prototype
-
-pnark.addToReporters = function addToReporters(key, value) {
-    this.reporters[key] = this.reporters[key] || []
-    if(Array.isArray(value)) {
-        this.reporters[key] = this.reporters[key].concat(value)
-    } else {
-        this.reporters[key].push(value)
-    }
-}
-
-pnark.setupPlugins = function setupPlugins(plugins) {
-    if(!plugins) return
-
-    plugins.forEach(plugin => this.setupReporters(plugin.reporters))
-    plugins.forEach(plugin => this.setupProfiles(plugin.profiles))
-}
-
-pnark.setupProfiles = function setupProfiles(profiles) {
-    if(typeof profiles === 'undefined') return
-
-    if(profiles.constructor !== Object) {
-        throw new Error('profiles must be an object defining an array of namespaces and reporters')
+        ;(options.plugins || []).forEach(plugin => this.use(plugin))
     }
 
-    var profileNames = Object.keys(profiles)
-
-    profileNames.forEach(name => {
-        var profile = profiles[name]
-
-        if(!Array.isArray(profile)) {
-            throw new Error('a profile must be an array of namespaces and reporters')
-        }
-
-        profile.forEach(p => this.addToReporters(name, this.reporters[p]))
-    })
-}
-
-pnark.setupReporters = function setupReporters(reporters, ns) {
-    if(typeof reporters === 'undefined') return
-
-    if(reporters.constructor !== Object) {
-        ns = ns || 'root'
-        throw new Error(ns + ' namespace must be an object of reporters')
+    use(fn) {
+        fn(this)
+        return this
     }
 
-    var reporterNames = Object.keys(reporters)
-
-    reporterNames.forEach(name => {
-        var definition
-        var reporter = reporters[name]
-
-        if(ns) name = ns + ':' + name
-
-        if(reporter instanceof Function) {
-            definition = { name, run:reporter }
-        } else if(reporter.onRequest instanceof Function) {
-            definition = {
-                name,
-                run:reporter.onRequest,
-                activate:reporter.activate,
-                deactivate:reporter.deactivate,
-            }
-        } else {
-            return this.setupReporters(reporter, name)
-        }
-
-        this.addToReporters('*', definition)
-        this.addToReporters(name, definition)
-        if(ns) this.addToReporters(ns, definition)
-    })
-}
-
-pnark.generateReport = function(reporterNames, req, res) {
-    var reporters = this.getReporters(reporterNames)
-    var report = new Report(reporters, req, res)
-
-    this.reports[report.id] = report
-
-    Promise.resolve(report.results).then(results => {
-        delete this.reports[report.id]
-
-        var reportFilePath = this.getReportPath(report.id)
-        var stream = fs.createWriteStream(reportFilePath)
-
-        stream.write(results.html)
-        stream.end()
-    })
-
-    return report
-}
-
-pnark.getReportPath = function getReportPath(id) {
-    return path.join(this.reportDirectory, id+'.html')
-}
-
-pnark.getReporters = function getReporters(reporterNames) {
-    if(typeof reporterNames === 'string') {
-        reporterNames = reporterNames.split(/,/g)
+    addReporter(name, run) {
+        this.reporters.push({ name, run })
     }
 
-    var reporters = []
+    generateReport(req, res) {
+        var report = new Report(this.reporters, req, res)
 
-    reporterNames.forEach(name => {
-        reporters = reporters.concat(this.reporters[name])
-    })
+        this.reports[report.id] = report
 
-    return reporters
-}
-
-pnark.getReport = function(id) {
-    var report = this.reports[id]
-    var reportFilePath = this.getReportPath(id)
-
-    if(report) {
-        var stream = new PassThrough()
         Promise.resolve(report.results).then(results => {
-            stream.write(results.html)
-            stream.end()
+            mkdirp(this.reportDirectory, () => {
+                delete this.reports[report.id]
+                var reportFilePath = this.getReportPath(report.id)
+                var stream = fs.createWriteStream(reportFilePath)
+
+                stream.write(results.html)
+                stream.end()
+            })
         })
-        return stream;
+
+        return report
     }
 
-    return fs.createReadStream(reportFilePath)
+    getReportPath(id) {
+        return path.join(this.reportDirectory, id+'.html')
+    }
+
+    getReport(id) {
+        var report = this.reports[id]
+        var reportFilePath = this.getReportPath(id)
+
+        if(report) {
+            var stream = new PassThrough()
+            Promise.resolve(report.results).then(results => {
+                stream.write(results.html)
+                stream.end()
+            })
+            return stream;
+        }
+
+        return fs.createReadStream(reportFilePath)
+    }
+
 }
