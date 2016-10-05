@@ -196,7 +196,7 @@ Section.formatters.chart = (data) => {
     </script>`)
 
     return {
-        html:`<div id="${chartId}"></div>`,
+        html:`<div id="${chartId}" style="height:${data.height}px;"></div>`,
         text:JSON.stringify(data, null, 2),
         resources
     }
