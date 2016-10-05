@@ -1,6 +1,6 @@
 {
   "name": "pnark",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "get insight into what's happening on your server during the lifecycle of a request",
   "main": "index.js",
   "scripts": {
