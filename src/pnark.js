@@ -15,7 +15,15 @@ module.exports = class Pnark{
         this.reporters = []
         this.reportDirectory = options.reportDirectory || path.join(process.cwd(), '.cache/pnark')
 
-        ;(options.plugins || []).forEach(plugin => this.use(plugin))
+        ;(options.plugins || []).forEach(plugin => {
+            if(typeof plugin === 'string') {
+                if(!/pnark-/.test(plugin)) {
+                    plugin = 'pnark-'+plugin
+                }
+                plugin = require(plugin)
+            }
+            this.use(plugin)
+        })
     }
 
     use(fn) {
@@ -33,6 +41,10 @@ module.exports = class Pnark{
         this.reports[report.id] = report
 
         Promise.resolve(report.results).then(results => {
+            if(report.cancelled) {
+                delete this.reports[report.id]
+                return
+            }
             mkdirp(this.reportDirectory, () => {
                 delete this.reports[report.id]
                 var reportFilePath = this.getReportPath(report.id)

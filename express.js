@@ -56,7 +56,11 @@ module.exports = function(options) {
 
         res.end = function end(data, encoding, callback) {
             if(data) this.write(data.toString(), encoding)
-            if(isHTML) this.write(code, 'utf-8')
+            if(isHTML) {
+                this.write(code, 'utf-8')
+            } else {
+                report.cancel()
+            }
             _end.apply(this)
         }
 

@@ -28,6 +28,9 @@ module.exports = class Report {
             this.generateResults()
         )
     }
+    cancel() {
+        this.cancelled = true
+    }
     runReporters() {
         return new Promise((resolve, reject) => {
             var remaining = this.reporters.length
